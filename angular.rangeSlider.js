@@ -405,6 +405,8 @@
                                         return +arg;
                                     } else if ((arg[0] == "\"" && arg[arg.length-1] == "\"") || (arg[0] == "\'" && arg[arg.length-1] == "\'")) {
                                         return arg.slice(1, -1);
+                                    } else {
+                                        return arg;
                                     }
                                 });
                                 modelMinOptions = filterOptions.slice();
