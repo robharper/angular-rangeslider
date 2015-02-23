@@ -1,13 +1,13 @@
 /*
  *  Angular RangeSlider Directive
- * 
+ *
  *  Version: 0.0.12
  *
  *  Author: Daniel Crisp, danielcrisp.com
  *
  *  The rangeSlider has been styled to match the default styling
  *  of form elements styled using Twitter's Bootstrap
- * 
+ *
  *  Originally forked from https://github.com/leongersen/noUiSlider
  *
 
@@ -119,7 +119,7 @@
                     modelMin: '=?',
                     modelMax: '=?',
                     onHandleDown: '&', // calls optional function when handle is grabbed
-                    onHandleUp: '&', // calls optional function when handle is released 
+                    onHandleUp: '&', // calls optional function when handle is released
                     orientation: '@', // options: horizontal | vertical | vertical left | vertical right
                     step: '@',
                     decimalPlaces: '@',
@@ -164,7 +164,7 @@
                 scope: scopeOptions,
                 link: function(scope, element, attrs, controller) {
 
-                    /** 
+                    /**
                      *  FIND ELEMENTS
                      */
 
@@ -389,9 +389,31 @@
                             scope.modelMin = Math.max(scope.min, scope.modelMin);
                             scope.modelMax = Math.min(scope.max, scope.modelMax);
 
-                            if (scope.filter) {
+                            if (scope.filterOptions) {
                                 scope.filteredModelMin = $filter(scope.filter)(scope.modelMin, scope.filterOptions);
                                 scope.filteredModelMax = $filter(scope.filter)(scope.modelMax, scope.filterOptions);
+                            } else if (scope.filter) {
+                                var filterTokens = scope.filter.split(':'),
+                                    filterName = scope.filter.split(':')[0],
+                                    filterOptions = filterTokens.slice().slice(1),
+                                    modelMinOptions,
+                                    modelMaxOptions;
+
+                                // properly parse quoted string and number args
+                                filterOptions = filterOptions.map(function (arg) {
+                                    if (isNumber(arg)) {
+                                        return +arg;
+                                    } else if ((arg[0] == "\"" && arg[arg.length-1] == "\"") || (arg[0] == "\'" && arg[arg.length-1] == "\'")) {
+                                        return arg.slice(1, -1);
+                                    }
+                                });
+                                modelMinOptions = filterOptions.slice();
+                                modelMaxOptions = filterOptions.slice();
+                                modelMinOptions.unshift(scope.modelMin);
+                                modelMaxOptions.unshift(scope.modelMax);
+
+                                scope.filteredModelMin = $filter(filterName).apply(null, modelMinOptions);
+                                scope.filteredModelMax = $filter(filterName).apply(null, modelMaxOptions);
                             } else {
                                 scope.filteredModelMin = scope.modelMin;
                                 scope.filteredModelMax = scope.modelMax;
