@@ -290,6 +290,10 @@
                     scope.$watch('modelMin', setModelMinMax);
                     scope.$watch('modelMax', setModelMinMax);
 
+                    // watch filters too
+                    scope.$watch('filter', setModelMinMax);
+                    scope.$watch('filterOptions', setModelMinMax);
+
                     /**
                      * HANDLE CHANGES
                      */
